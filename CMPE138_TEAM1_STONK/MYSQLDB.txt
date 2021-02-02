@@ -1,0 +1,68 @@
+drop database if exists stonk; #SJSU CMPE138 FALL2020 TEAM1
+create database stonk;
+use stonk;
+
+create table stock_account
+	(user_id		numeric(10,0),
+    user_email		varchar(20),
+    user_password	varchar(255),
+    user_name		varchar(50),
+    total_value		numeric(10,2) default 0,
+    funds			numeric(10,2) default 0,
+    is_admin		tinyint,
+    primary key (user_id)
+    );
+    
+create table bank_account
+	(user_id		numeric(10,0),
+    routing_number 	int(9) unsigned,
+    account_number 	int(12) unsigned,
+    primary key 	(user_id),
+    foreign key 	(user_id) references stock_account(user_id) on delete cascade
+    );
+    
+create table stock_info
+(stock_symbol 		varchar(4),
+stock_name			varchar(20),
+ceo					varchar(20),
+founded_year		year,
+current_value		numeric(10,2),
+primary key			(stock_symbol)
+);
+    
+create table buy_request
+(user_id			numeric(10,0),
+buy_req_id			int(5) unsigned zerofill,
+price				numeric(10,2),
+quantity			int(10),
+stock_symbol		varchar(4),
+req_date			date,
+accept_date			date,
+primary key 		(user_id, buy_req_id),
+foreign key 		(user_id) references stock_account(user_id) on delete cascade,
+foreign key			(stock_symbol) references stock_info(stock_symbol) on delete cascade
+);
+    
+create table sales_request
+(user_id			numeric(10,0),
+sales_req_id		int(5) unsigned zerofill,
+price				numeric(10,2),
+quantity			int(10),
+stock_symbol		varchar(4),
+req_date			date,
+accept_date			date,
+primary key 		(user_id, sales_req_id),
+foreign key 		(user_id) references stock_account(user_id) on delete cascade,
+foreign key			(stock_symbol) references stock_info(stock_symbol) on delete cascade
+);
+
+create table shares(
+user_id				numeric(10,0),
+stock_symbol		varchar(4),
+current_value		numeric(10,2),
+quantity			int(10) default 0,
+primary key			(user_id, stock_symbol),
+foreign key 		(user_id) references stock_account(user_id) on delete cascade,
+foreign key			(stock_symbol) references stock_info(stock_symbol) on delete cascade
+);
+
